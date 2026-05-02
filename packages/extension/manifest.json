@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Next.js SSR DevTools",
+  "version": "0.1.0",
+  "description": "Chrome DevTools panel for inspecting Next.js SSR fetch calls.",
+  "minimum_chrome_version": "108",
+  "devtools_page": "devtools.html"
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SSR Fetches</title>
+    <link rel="stylesheet" href="panel.css" />
+  </head>
+  <body>
+    <header>
+      <div class="title">SSR Fetches</div>
+      <button id="refresh" title="Refresh">↻ Refresh</button>
+      <button id="clear" title="Clear current view">Clear</button>
+      <span id="status" class="status"></span>
+    </header>
+    <main>
+      <section id="list">
+        <table id="table">
+          <thead>
+            <tr>
+              <th class="col-method">Method</th>
+              <th class="col-status">Status</th>
+              <th class="col-url">URL</th>
+              <th class="col-duration">Duration</th>
+              <th class="col-size">Size</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div id="empty" class="empty">
+          No SSR fetches captured yet.
+          <div class="hint">
+            Make sure the page is rendered with <code>@leeyounagh/ssr-devtools</code>
+            instrumentation enabled, then reload.
+          </div>
+        </div>
+      </section>
+      <section id="detail">
+        <div class="placeholder">Select a row to see details</div>
+      </section>
+    </main>
+    <script src="panel.js"></script>
+  </body>
+</html>

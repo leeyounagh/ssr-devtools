@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.next/
+out/
+*.log
+.DS_Store
+.env*.local
+.turbo/
+*.tsbuildinfo
+packages/extension/dist/
+packages/extension/*.zip

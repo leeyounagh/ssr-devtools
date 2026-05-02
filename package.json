@@ -1,0 +1,17 @@
+{
+  "name": "ssr-devtools-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspaces --if-present",
+    "demo": "npm run dev --workspace examples/nextjs-demo"
+  },
+  "engines": {
+    "node": ">=18.17.0"
+  }
+}
