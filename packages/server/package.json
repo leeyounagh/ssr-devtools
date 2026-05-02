@@ -9,7 +9,7 @@
     "directory": "packages/server"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "type": "module",
   "files": [

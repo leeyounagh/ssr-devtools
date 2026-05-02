@@ -118,12 +118,9 @@ const session = await fetch(apiPath + '?id=' + requestId).then(r => r.json());
 
 > 요구사항: **Next.js 14+ App Router**. 14.x는 `next.config`에 `experimental.instrumentationHook: true` 도 켜야 합니다 (15.0+에서 stable).
 
-### 1. 패키지 설치 (GitHub Packages)
+### 1. 패키지 설치
 
 ```bash
-# .npmrc
-echo '@leeyounagh:registry=https://npm.pkg.github.com' >> .npmrc
-
 npm install @leeyounagh/ssr-devtools
 ```
 
@@ -204,8 +201,14 @@ npm run demo                # 데모 앱 실행 → http://localhost:3000
 
 ## 릴리즈 (publish)
 
-`packages/server` 의 `package.json` 버전을 올린 뒤 매칭되는 태그를 푸시하면 GitHub Actions가 `@leeyounagh/ssr-devtools` 를 GitHub Packages에 자동 publish 합니다.
+`packages/server` 의 `package.json` 버전을 올린 뒤 매칭되는 태그를 푸시하면 GitHub Actions가 `@leeyounagh/ssr-devtools` 를 **public npm registry** 에 자동 publish 합니다.
 
+**최초 1회 셋업**:
+1. [npmjs.com](https://www.npmjs.com/signup) 가입
+2. Access Tokens → Generate New Token → **Automation** (또는 Granular: scope `@leeyounagh`, permission `Read and write`)
+3. GitHub repo → Settings → Secrets and variables → Actions → New secret 이름 `NPM_TOKEN` 으로 그 토큰 등록
+
+**릴리즈할 때마다**:
 ```bash
 # 1. packages/server/package.json 의 "version" 을 0.1.1 로 수정 + 커밋
 # 2. 태그 생성 + 푸시
