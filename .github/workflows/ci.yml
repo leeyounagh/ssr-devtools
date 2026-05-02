@@ -22,8 +22,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Debug environment
+        run: |
+          node --version
+          npm --version
+          echo "--- workspace list ---"
+          npm ls --workspaces --depth=0 || true
+          echo "--- packages/server contents ---"
+          ls -la packages/server
+          echo "--- packages/server/node_modules/.bin ---"
+          ls packages/server/node_modules/.bin 2>/dev/null | head -30 || echo "no local bin"
+          echo "--- root node_modules/.bin ---"
+          ls node_modules/.bin | head -30
+          echo "--- which tsup ---"
+          which tsup || echo "tsup not in PATH"
+          npx --no-install tsup --version || echo "npx tsup failed"
+
       - name: Build server package
-        run: npm run build --workspace=packages/server
+        run: |
+          cd packages/server
+          npm run build || (echo "BUILD FAILED, exit $?"; exit 1)
 
       - name: Build extension icons
         run: npm run build:icons --workspace=packages/extension
