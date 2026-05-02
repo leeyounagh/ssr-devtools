@@ -37,11 +37,18 @@ async function readMarker() {
 }
 
 async function fetchSession(apiPath, requestId) {
-  const expr = `(async () => {
+  // chrome.devtools.inspectedWindow.eval does not await Promises — it serializes
+  // whatever the expression returns synchronously, so an async IIFE comes back
+  // as `{}`. Use synchronous XHR so the eval expression returns the parsed JSON
+  // directly. Sync XHR is deprecated but works in the main thread, which is
+  // where evaluated expressions run.
+  const expr = `(() => {
     const url = ${JSON.stringify(apiPath)} + '?id=' + encodeURIComponent(${JSON.stringify(requestId)});
-    const r = await fetch(url, { cache: 'no-store' });
-    if (!r.ok) throw new Error('status ' + r.status);
-    return r.json();
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', url, false);
+    try { xhr.send(); } catch (e) { throw new Error('network error: ' + e.message); }
+    if (xhr.status !== 200) throw new Error('status ' + xhr.status);
+    try { return JSON.parse(xhr.responseText); } catch (e) { throw new Error('parse error: ' + e.message); }
   })()`;
   return evalInPage(expr);
 }
