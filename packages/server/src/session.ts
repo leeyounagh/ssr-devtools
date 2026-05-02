@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
+import { headers } from "next/headers";
 import { getGlobalState, rememberSession } from "./registry";
 import type { RequestSession } from "./types";
 
-export function getCurrentSession(): RequestSession | null {
+export async function getCurrentSession(): Promise<RequestSession | null> {
   let h: object | null;
   try {
-    const mod = require("next/headers") as { headers: () => object };
-    h = mod.headers();
+    const result = headers() as unknown as object | Promise<object>;
+    h = result instanceof Promise ? await result : result;
   } catch {
     return null;
   }
