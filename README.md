@@ -110,7 +110,7 @@ const session = await fetch(apiPath + '?id=' + requestId).then(r => r.json());
 
 | 위치 | 내용 |
 |---|---|
-| `packages/server/` | `@leeyounagh/ssr-devtools` — Next.js 앱이 설치할 npm 패키지 |
+| `packages/server/` | `@leesuyeon/ssr-devtools` — Next.js 앱이 설치할 npm 패키지 |
 | `packages/extension/` | Chrome MV3 DevTools 익스텐션 |
 | `examples/nextjs-demo/` | 동작 검증용 데모 앱 |
 
@@ -121,7 +121,7 @@ const session = await fetch(apiPath + '?id=' + requestId).then(r => r.json());
 ### 1. 패키지 설치
 
 ```bash
-npm install @leeyounagh/ssr-devtools
+npm install @leesuyeon/ssr-devtools
 ```
 
 ### 2. `instrumentation.ts` (프로젝트 루트)
@@ -129,7 +129,7 @@ npm install @leeyounagh/ssr-devtools
 ```ts
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs") {
-    const { setup } = await import("@leeyounagh/ssr-devtools/instrumentation");
+    const { setup } = await import("@leesuyeon/ssr-devtools/instrumentation");
     setup({ enabled: process.env.NODE_ENV !== "production" });
   }
 }
@@ -146,7 +146,7 @@ export default {
 ### 4. `app/layout.tsx`
 
 ```tsx
-import { SSRDevtoolsScript } from "@leeyounagh/ssr-devtools/react";
+import { SSRDevtoolsScript } from "@leesuyeon/ssr-devtools/react";
 
 export default function RootLayout({ children }) {
   return (
@@ -163,7 +163,7 @@ export default function RootLayout({ children }) {
 ### 5. `app/api/ssr-devtools/route.ts`
 
 ```ts
-export { GET } from "@leeyounagh/ssr-devtools/route";
+export { GET } from "@leesuyeon/ssr-devtools/route";
 ```
 
 > 폴더 이름이 `_`로 시작하면 안 됩니다 — App Router가 private folder로 취급해서 라우팅에서 제외됩니다.
@@ -201,11 +201,11 @@ npm run demo                # 데모 앱 실행 → http://localhost:3000
 
 ## 릴리즈 (publish)
 
-`packages/server` 의 `package.json` 버전을 올린 뒤 매칭되는 태그를 푸시하면 GitHub Actions가 `@leeyounagh/ssr-devtools` 를 **public npm registry** 에 자동 publish 합니다.
+`packages/server` 의 `package.json` 버전을 올린 뒤 매칭되는 태그를 푸시하면 GitHub Actions가 `@leesuyeon/ssr-devtools` 를 **public npm registry** 에 자동 publish 합니다.
 
 **최초 1회 셋업**:
 1. [npmjs.com](https://www.npmjs.com/signup) 가입
-2. Access Tokens → Generate New Token → **Automation** (또는 Granular: scope `@leeyounagh`, permission `Read and write`)
+2. Access Tokens → Generate New Token → **Automation** (또는 Granular: scope `@leesuyeon`, permission `Read and write`)
 3. GitHub repo → Settings → Secrets and variables → Actions → New secret 이름 `NPM_TOKEN` 으로 그 토큰 등록
 
 **릴리즈할 때마다**:

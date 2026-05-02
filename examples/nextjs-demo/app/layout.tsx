@@ -1,4 +1,4 @@
-import { SSRDevtoolsScript } from "@leeyounagh/ssr-devtools/react";
+import { SSRDevtoolsScript } from "@leesuyeon/ssr-devtools/react";
 import type { ReactNode } from "react";
 
 export const metadata = { title: "SSR DevTools demo" };

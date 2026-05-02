@@ -1,6 +1,6 @@
 import type { RequestSession, SSRDevtoolsConfig } from "./types";
 
-const REGISTRY_KEY = Symbol.for("@leeyounagh/ssr-devtools/registry");
+const REGISTRY_KEY = Symbol.for("@leesuyeon/ssr-devtools/registry");
 
 interface GlobalState {
   sessions: Map<string, RequestSession>;

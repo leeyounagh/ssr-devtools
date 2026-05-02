@@ -1,14 +1,14 @@
 # SSR DevTools — Chrome extension
 
 DevTools panel that lists Next.js SSR fetch calls captured by
-[`@leeyounagh/ssr-devtools`](../server).
+[`@leesuyeon/ssr-devtools`](../server).
 
 ## Load locally (unpacked)
 
 1. `chrome://extensions`
 2. Toggle **Developer mode**
 3. **Load unpacked** → select this folder
-4. Open a Next.js dev/staging page that has `@leeyounagh/ssr-devtools` set up
+4. Open a Next.js dev/staging page that has `@leesuyeon/ssr-devtools` set up
 5. Open DevTools (F12) → **SSR Fetches** tab
 
 The panel reads `<script data-ssr-devtools data-ssr-devtools-request-id="…"

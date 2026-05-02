@@ -1,4 +1,4 @@
-name: Publish @leeyounagh/ssr-devtools
+name: Publish @leesuyeon/ssr-devtools
 
 on:
   push:

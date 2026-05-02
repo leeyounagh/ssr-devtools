@@ -1,1 +1,1 @@
-export { GET } from "@leeyounagh/ssr-devtools/route";
+export { GET } from "@leesuyeon/ssr-devtools/route";
