@@ -1,0 +1,224 @@
+# @leesuyeon/ssr-devtools
+
+[![npm version](https://img.shields.io/npm/v/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
+[![npm downloads](https://img.shields.io/npm/dm/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
+[![license](https://img.shields.io/npm/l/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://github.com/leeyounagh/ssr-devtools/blob/main/LICENSE)
+
+> Inspect **Next.js App Router SSR `fetch()` calls** in Chrome DevTools.
+> Companion server package for the SSR DevTools Chrome extension.
+
+🌐 [English](#english) | [한국어](#한국어)
+
+---
+
+## English
+
+### Why
+
+In Next.js App Router, `fetch()` calls inside Server Components run on the
+Node.js server. The browser only receives the rendered HTML, so **none of
+those fetches show up in the DevTools Network tab** — you can't see URLs,
+headers, status codes, durations, or response bodies.
+
+This package patches `globalThis.fetch` on the server, captures every SSR
+fetch into an in-memory per-request session, and exposes them through a
+small marker `<script>` and an API route. Pair it with the
+[SSR DevTools Chrome extension](https://github.com/leeyounagh/ssr-devtools/tree/main/packages/extension)
+(load unpacked from the repo for now) to view captured fetches in a
+DevTools panel — like the Network tab, but for SSR.
+
+### Install
+
+```bash
+npm install @leesuyeon/ssr-devtools
+```
+
+Requirements: **Next.js 14+** with the **App Router**. On Next 14.x, also
+enable `experimental.instrumentationHook: true` in `next.config` (stable
+in 15.0+).
+
+### Setup (4 files)
+
+**1. `instrumentation.ts`** at the project root:
+
+```ts
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    const { setup } = await import("@leesuyeon/ssr-devtools/instrumentation");
+    setup({ enabled: process.env.NODE_ENV !== "production" });
+  }
+}
+```
+
+**2. `next.config.mjs`** (Next 14.x only):
+
+```js
+export default {
+  experimental: { instrumentationHook: true },
+};
+```
+
+**3. `app/layout.tsx`** — render the marker inside `<body>`:
+
+```tsx
+import { SSRDevtoolsScript } from "@leesuyeon/ssr-devtools/react";
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <SSRDevtoolsScript />
+      </body>
+    </html>
+  );
+}
+```
+
+**4. `app/api/ssr-devtools/route.ts`** — expose the API:
+
+```ts
+export { GET } from "@leesuyeon/ssr-devtools/route";
+```
+
+> The folder must NOT start with `_` — App Router treats `_*` folders as
+> private and excludes them from routing.
+
+That's it. Open a Next.js page, open DevTools, switch to the **SSR
+Fetches** panel.
+
+### Configuration
+
+```ts
+setup({
+  enabled: true,                // disable in production by default
+  maxBodySize: 100_000,         // bytes; bodies above this are truncated
+  maxSessions: 200,             // recent sessions kept in memory
+  redactHeaders: ["authorization", "cookie", "set-cookie", "x-api-key"],
+  apiPath: "/api/ssr-devtools", // must match the folder you put route.ts in
+});
+```
+
+### How it works (one paragraph)
+
+`setup()` replaces `globalThis.fetch` with a wrapper that records every
+call into a per-request session. Sessions are keyed on the Headers object
+returned by `next/headers` — the same reference is shared across all code
+paths in a single request, which makes it work where React's `cache()`
+falls down (it's scoped per route segment, not per request). The
+`<SSRDevtoolsScript />` component renders a `<script data-ssr-devtools>`
+marker carrying the request id; the API route returns the session for
+that id. The Chrome extension reads the marker and hits the API.
+
+→ See the [full README](https://github.com/leeyounagh/ssr-devtools#readme)
+for diagrams, tradeoffs, and gotchas.
+
+### License
+
+MIT — see [LICENSE](https://github.com/leeyounagh/ssr-devtools/blob/main/LICENSE).
+
+---
+
+## 한국어
+
+### 왜 필요한가요
+
+Next.js App Router에서 Server Component가 호출하는 `fetch()` 는 Node.js
+서버 안에서만 일어납니다. 브라우저는 렌더된 HTML만 받기 때문에 **어떤
+SSR fetch도 DevTools의 Network 탭에 보이지 않습니다** — URL, 헤더, 상태
+코드, 응답 시간, response body 모두 확인할 길이 없습니다.
+
+이 패키지는 서버에서 `globalThis.fetch` 를 가로채 요청별 세션에 SSR
+fetch를 모으고, 작은 `<script>` 마커와 API route로 브라우저에 노출합니다.
+[SSR DevTools Chrome 익스텐션](https://github.com/leeyounagh/ssr-devtools/tree/main/packages/extension)
+과 함께 쓰면 DevTools 패널에서 SSR fetch 목록을 볼 수 있어요 — Network
+탭처럼 생긴, 그러나 SSR 전용 패널이라고 보시면 됩니다.
+
+### 설치
+
+```bash
+npm install @leesuyeon/ssr-devtools
+```
+
+요구사항: **Next.js 14+** + **App Router**. 14.x는 `next.config` 에
+`experimental.instrumentationHook: true` 도 켜야 합니다 (15.0+ 부터
+stable).
+
+### 설정 (파일 4개)
+
+**1. 프로젝트 루트의 `instrumentation.ts`**:
+
+```ts
+export async function register() {
+  if (process.env.NEXT_RUNTIME === "nodejs") {
+    const { setup } = await import("@leesuyeon/ssr-devtools/instrumentation");
+    setup({ enabled: process.env.NODE_ENV !== "production" });
+  }
+}
+```
+
+**2. `next.config.mjs`** (Next 14.x 만):
+
+```js
+export default {
+  experimental: { instrumentationHook: true },
+};
+```
+
+**3. `app/layout.tsx`** — `<body>` 안에 마커 렌더:
+
+```tsx
+import { SSRDevtoolsScript } from "@leesuyeon/ssr-devtools/react";
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <SSRDevtoolsScript />
+      </body>
+    </html>
+  );
+}
+```
+
+**4. `app/api/ssr-devtools/route.ts`** — API 노출:
+
+```ts
+export { GET } from "@leesuyeon/ssr-devtools/route";
+```
+
+> 폴더 이름이 `_` 로 시작하면 안 됩니다 — App Router 가 private folder
+> 로 취급해서 라우팅에서 제외됩니다.
+
+끝입니다. Next.js 페이지 열고 DevTools 열어서 **SSR Fetches** 탭 클릭하세요.
+
+### 설정 옵션
+
+```ts
+setup({
+  enabled: true,                // production은 기본 비활성
+  maxBodySize: 100_000,         // bytes; 초과 시 truncate
+  maxSessions: 200,             // 메모리에 보관할 최근 세션 수
+  redactHeaders: ["authorization", "cookie", "set-cookie", "x-api-key"],
+  apiPath: "/api/ssr-devtools", // route.ts 둔 폴더와 일치시킬 것
+});
+```
+
+### 동작 원리 (한 문단)
+
+`setup()` 은 `globalThis.fetch` 를 우리 wrapper로 갈아치워서 모든 호출을
+요청별 세션에 기록합니다. 세션 키는 `next/headers` 의 Headers 객체 — 한
+요청 내 모든 코드 경로에서 같은 reference 라서, route segment 별로 분리되는
+React `cache()` 와 달리 layout/page 사이에서도 같은 세션을 봅니다.
+`<SSRDevtoolsScript />` 는 request id 가 박힌 `<script data-ssr-devtools>`
+를 렌더하고, API route 는 그 id 로 세션을 돌려줍니다. Chrome 익스텐션이
+마커에서 id 읽어 API 를 호출하는 구조.
+
+→ 다이어그램, 트레이드오프, 함정 등 전체 설명은
+[전체 README](https://github.com/leeyounagh/ssr-devtools/blob/main/README.md)
+참고.
+
+### 라이선스
+
+MIT — [LICENSE](https://github.com/leeyounagh/ssr-devtools/blob/main/LICENSE) 참조.
