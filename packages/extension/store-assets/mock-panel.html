@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>SSR Fetches — preview</title>
+  <link rel="stylesheet" href="../panel.css" />
+  <style>
+    /* Force dark mode for the screenshot regardless of host system. */
+    html, body {
+      color: #e6edf3 !important;
+      background: #0d1117 !important;
+    }
+    header {
+      background: #161b22 !important;
+      border-bottom-color: #30363d !important;
+    }
+    button {
+      background: #21262d !important;
+      border-color: #30363d !important;
+      color: #e6edf3 !important;
+    }
+    thead th {
+      background: #161b22 !important;
+      border-bottom-color: #30363d !important;
+    }
+    tbody tr:hover { background: #161b22 !important; }
+    tbody tr.selected { background: #1f6feb40 !important; }
+    tbody td { border-bottom-color: #21262d !important; }
+    #list { border-right-color: #30363d !important; }
+    .detail-tabs {
+      background: #161b22 !important;
+      border-bottom-color: #30363d !important;
+    }
+    pre.body {
+      background: #161b22 !important;
+      border-color: #30363d !important;
+    }
+    code { background: #161b22 !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="title">SSR Fetches</div>
+    <button>↻ Refresh</button>
+    <button>Clear</button>
+    <span class="status">12 fetch(es) · updated 14:32:11</span>
+  </header>
+  <main>
+    <section id="list">
+      <table id="table">
+        <thead>
+          <tr>
+            <th class="col-method">Method</th>
+            <th class="col-status">Status</th>
+            <th class="col-url">URL</th>
+            <th class="col-duration">Duration</th>
+            <th class="col-size">Size</th>
+          </tr>
+        </thead>
+        <tbody id="rows">
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">jsonplaceholder.typicode.com/users/1</td>
+            <td>234 ms</td>
+            <td>421 B</td>
+          </tr>
+          <tr class="selected">
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">jsonplaceholder.typicode.com/posts?_limit=5</td>
+            <td>305 ms</td>
+            <td>1.4 KB</td>
+          </tr>
+          <tr>
+            <td><span class="method method-POST">POST</span></td>
+            <td class="status-2xx">201</td>
+            <td class="url-cell">jsonplaceholder.typicode.com/posts</td>
+            <td>412 ms</td>
+            <td>88 B</td>
+          </tr>
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-3xx">304</td>
+            <td class="url-cell">cdn.example.com/static/avatar.json</td>
+            <td>23 ms</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="method method-PUT">PUT</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">api.example.com/projects/42</td>
+            <td>156 ms</td>
+            <td>312 B</td>
+          </tr>
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-4xx">404</td>
+            <td class="url-cell">api.example.com/missing-resource</td>
+            <td>89 ms</td>
+            <td>54 B</td>
+          </tr>
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">api.example.com/users/me/permissions</td>
+            <td>67 ms</td>
+            <td>248 B</td>
+          </tr>
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">api.example.com/teams?include=members</td>
+            <td>312 ms</td>
+            <td>3.2 KB</td>
+          </tr>
+          <tr>
+            <td><span class="method method-DELETE">DELETE</span></td>
+            <td class="status-2xx">204</td>
+            <td class="url-cell">api.example.com/notifications/15</td>
+            <td>78 ms</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="method method-PATCH">PATCH</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">api.example.com/projects/42/status</td>
+            <td>122 ms</td>
+            <td>156 B</td>
+          </tr>
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-5xx">503</td>
+            <td class="url-cell">flaky-service.example.com/health</td>
+            <td>2.04 s</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td><span class="method method-GET">GET</span></td>
+            <td class="status-2xx">200</td>
+            <td class="url-cell">api.example.com/feature-flags</td>
+            <td>14 ms</td>
+            <td>892 B</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section id="detail">
+      <div class="detail-tabs">
+        <button class="detail-tab">General</button>
+        <button class="detail-tab">Headers</button>
+        <button class="detail-tab">Request body</button>
+        <button class="detail-tab active">Response body</button>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <h3>Meta</h3>
+          <div class="kv">
+            <span class="k">Content-Type</span><span>application/json; charset=utf-8</span>
+            <span class="k">Size</span><span>1.4 KB</span>
+          </div>
+        </div>
+        <pre class="body">[
+  {
+    "userId": 1,
+    "id": 1,
+    "title": "sunt aut facere repellat provident occaecati",
+    "body": "quia et suscipit suscipit recusandae consequuntur..."
+  },
+  {
+    "userId": 1,
+    "id": 2,
+    "title": "qui est esse",
+    "body": "est rerum tempore vitae sequi sint nihil reprehenderit..."
+  },
+  {
+    "userId": 1,
+    "id": 3,
+    "title": "ea molestias quasi exercitationem repellat qui ipsa",
+    "body": "et iusto sed quo iure voluptatem occaecati..."
+  },
+  {
+    "userId": 1,
+    "id": 4,
+    "title": "eum et est occaecati",
+    "body": "ullam et saepe reiciendis voluptatem adipisci sit amet..."
+  },
+  {
+    "userId": 1,
+    "id": 5,
+    "title": "nesciunt quas odio",
+    "body": "repudiandae veniam quaerat sunt sed alias aut fugiat..."
+  }
+]</pre>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
