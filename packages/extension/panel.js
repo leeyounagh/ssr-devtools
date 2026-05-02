@@ -36,21 +36,29 @@ async function readMarker() {
   })()`);
 }
 
-async function fetchSession(apiPath, requestId) {
-  // chrome.devtools.inspectedWindow.eval does not await Promises — it serializes
-  // whatever the expression returns synchronously, so an async IIFE comes back
-  // as `{}`. Use synchronous XHR so the eval expression returns the parsed JSON
-  // directly. Sync XHR is deprecated but works in the main thread, which is
-  // where evaluated expressions run.
-  const expr = `(() => {
-    const url = ${JSON.stringify(apiPath)} + '?id=' + encodeURIComponent(${JSON.stringify(requestId)});
+// chrome.devtools.inspectedWindow.eval does not await Promises — it serializes
+// whatever the expression returns synchronously, so an async IIFE comes back
+// as `{}`. Use synchronous XHR so the eval expression returns the parsed JSON
+// directly. Sync XHR is deprecated but works in the main thread, which is
+// where evaluated expressions run.
+function syncFetchExpr(url) {
+  return `(() => {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, false);
+    xhr.open('GET', ${JSON.stringify(url)}, false);
     try { xhr.send(); } catch (e) { throw new Error('network error: ' + e.message); }
     if (xhr.status !== 200) throw new Error('status ' + xhr.status);
     try { return JSON.parse(xhr.responseText); } catch (e) { throw new Error('parse error: ' + e.message); }
   })()`;
-  return evalInPage(expr);
+}
+
+async function fetchSession(apiPath, requestId) {
+  return evalInPage(
+    syncFetchExpr(apiPath + "?id=" + encodeURIComponent(requestId)),
+  );
+}
+
+async function fetchAllSessions(apiPath) {
+  return evalInPage(syncFetchExpr(apiPath));
 }
 
 async function refresh() {
@@ -63,8 +71,36 @@ async function refresh() {
       setStatus("No marker on page. Add <SSRDevtoolsScript /> and reload.");
       return;
     }
-    const session = await fetchSession(marker.apiPath, marker.requestId);
-    state.entries = session.entries ?? [];
+    // Fetch the marker's session (initial GET) AND the recent-sessions list.
+    // Server actions / mutations (POST, PUT, DELETE, …) execute in NEW server
+    // request contexts with NEW headers, so their fetches end up in fresh
+    // sessions whose ids the page DOM doesn't know about. To surface those,
+    // we merge the marker session with all other sessions started >= the
+    // marker session's startedAt.
+    const [markerSession, all] = await Promise.all([
+      fetchSession(marker.apiPath, marker.requestId).catch(() => null),
+      fetchAllSessions(marker.apiPath).catch(() => ({ sessions: [] })),
+    ]);
+    const markerSessionStartedAt =
+      markerSession?.startedAt ?? Number.MIN_SAFE_INTEGER;
+    const seen = new Set();
+    const merged = [];
+    const addEntries = (session) => {
+      if (!session) return;
+      for (const e of session.entries ?? []) {
+        if (seen.has(e.id)) continue;
+        seen.add(e.id);
+        merged.push(e);
+      }
+    };
+    addEntries(markerSession);
+    for (const s of all?.sessions ?? []) {
+      if (s.requestId === marker.requestId) continue;
+      if ((s.startedAt ?? 0) < markerSessionStartedAt) continue;
+      addEntries(s);
+    }
+    merged.sort((a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0));
+    state.entries = merged;
     render();
     const ts = new Date().toLocaleTimeString();
     setStatus(`${state.entries.length} fetch(es) · updated ${ts}`);
