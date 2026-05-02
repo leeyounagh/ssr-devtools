@@ -2,6 +2,22 @@
 
 > **Next.js App Router SSR fetch 디버깅용 Chrome DevTools 익스텐션 + 서버 패키지**
 
+[![npm version](https://img.shields.io/npm/v/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
+[![npm downloads](https://img.shields.io/npm/dm/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
+[![license](https://img.shields.io/npm/l/@leesuyeon/ssr-devtools.svg?style=flat-square)](./LICENSE)
+
+## 빠른 설치
+
+```bash
+npm install @leesuyeon/ssr-devtools
+```
+
+📦 **npm**: https://www.npmjs.com/package/@leesuyeon/ssr-devtools
+
+설치 후 [통합 가이드](#nextjs-프로젝트에-통합하기)대로 4개 파일에 코드 몇 줄 추가하면 끝.
+
+---
+
 ## 문제: SSR 데이터 패칭은 디버깅이 어렵다
 
 Next.js App Router에서 Server Component가 호출하는 `fetch()`는 **Node.js 서버 안에서만** 일어납니다. 브라우저는 그 결과로 만들어진 HTML만 받기 때문에, **개발자 도구의 Network 탭에는 아무것도 찍히지 않습니다.**
