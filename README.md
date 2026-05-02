@@ -193,6 +193,15 @@ Chrome Web Store 등록 전까지는:
 3. **압축해제된 확장 프로그램을 로드합니다** → `packages/extension/` 폴더 선택
 4. Next.js 페이지 열고 DevTools(F12) → **SSR Fetches** 탭
 
+## 사용 시 주의사항
+
+- **첫 페이지 로드** 의 SSR fetch 는 자동으로 잡힙니다 — `<SSRDevtoolsScript />` 가 박은 마커가 초기 렌더 세션 ID 를 들고 있어서 패널 열면 바로 보입니다.
+- **그 다음 서버사이드 요청** (Server Action, route handler, `revalidate`, form submit 으로 발생하는 mutation 등) 은 각각 **새 request context** + **새 세션** 으로 실행됩니다. 패널은 이런 요청에 대해 **자동 갱신되지 않으므로**, 서버 액션을 일으킨 뒤 패널의 **Refresh 버튼** 을 눌러야 새 fetch 가 표시됩니다.
+- 풀 페이지 네비게이션 시에는 자동 갱신됩니다 (`chrome.devtools.network.onNavigated`). App Router 의 soft client-side 네비게이션은 수동 Refresh 필요.
+- 실시간 폴링 / SSE 푸시는 로드맵에 있습니다. 당분간은 Refresh 가 약속.
+
+> **왜 이렇게 동작하나요?** — Next.js 의 모든 서버사이드 요청은 각자 새 `headers()` 객체와 새 request context 에서 실행됩니다. 이 패키지는 `WeakMap<Headers, Session>` 으로 요청별 세션 격리를 하는데, 페이지에 박힌 마커는 초기 렌더의 세션 ID 만 갖고 있어서 후속 server action 의 fetch 는 다른 세션으로 들어갑니다. 패널이 Refresh 시 list-sessions endpoint 까지 조회해서 해당 페이지 로드 이후의 모든 세션을 머지하는 구조입니다.
+
 ## 설정 옵션
 
 ```ts
