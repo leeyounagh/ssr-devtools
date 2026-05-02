@@ -188,7 +188,7 @@ export function patchFetch(): void {
         responseBody: null,
         error: (err as Error).message,
       };
-      getCurrentSession()?.entries.push(entry);
+      (await getCurrentSession())?.entries.push(entry);
       throw err;
     }
 
@@ -209,7 +209,7 @@ export function patchFetch(): void {
       responseBody,
       error: null,
     };
-    getCurrentSession()?.entries.push(entry);
+    (await getCurrentSession())?.entries.push(entry);
     return response;
   };
 

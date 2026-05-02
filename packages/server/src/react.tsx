@@ -2,11 +2,11 @@ import * as React from "react";
 import { getGlobalState } from "./registry";
 import { getCurrentSession } from "./session";
 
-export function SSRDevtoolsScript(): React.ReactElement | null {
+export async function SSRDevtoolsScript(): Promise<React.ReactElement | null> {
   const state = getGlobalState();
   if (!state.config.enabled) return null;
 
-  const session = getCurrentSession();
+  const session = await getCurrentSession();
   if (!session) return null;
 
   return (
