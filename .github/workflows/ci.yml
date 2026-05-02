@@ -20,28 +20,16 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Debug environment
+        # Workaround for npm/cli#4828: workspace + optionalDependencies bug
+        # leaves platform-specific native binaries (rollup, esbuild) unin-
+        # stalled. Wiping node_modules and using `npm install` reliably
+        # resolves the matching binary for the current platform.
         run: |
-          node --version
-          npm --version
-          echo "--- workspace list ---"
-          npm ls --workspaces --depth=0 || true
-          echo "--- packages/server contents ---"
-          ls -la packages/server
-          echo "--- packages/server/node_modules/.bin ---"
-          ls packages/server/node_modules/.bin 2>/dev/null | head -30 || echo "no local bin"
-          echo "--- root node_modules/.bin ---"
-          ls node_modules/.bin | head -30
-          echo "--- which tsup ---"
-          which tsup || echo "tsup not in PATH"
-          npx --no-install tsup --version || echo "npx tsup failed"
+          rm -rf node_modules
+          npm install --no-audit --no-fund
 
       - name: Build server package
-        run: |
-          cd packages/server
-          npm run build || (echo "BUILD FAILED, exit $?"; exit 1)
+        run: npm run build --workspace=packages/server
 
       - name: Build extension icons
         run: npm run build:icons --workspace=packages/extension
