@@ -202,6 +202,19 @@ npm run demo                # 데모 앱 실행 → http://localhost:3000
 
 `packages/server/src/*` 수정 후 그 워크스페이스에서 `npm run build` 다시 돌리고, demo는 재시작 (Next.js가 instrumentation 모듈을 부팅 시점에 캐싱).
 
+## 릴리즈 (publish)
+
+`packages/server` 의 `package.json` 버전을 올린 뒤 매칭되는 태그를 푸시하면 GitHub Actions가 `@leeyounagh/ssr-devtools` 를 GitHub Packages에 자동 publish 합니다.
+
+```bash
+# 1. packages/server/package.json 의 "version" 을 0.1.1 로 수정 + 커밋
+# 2. 태그 생성 + 푸시
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+태그 버전과 `package.json` 버전이 일치하지 않으면 워크플로가 실패합니다.
+
 ## License
 
 MIT

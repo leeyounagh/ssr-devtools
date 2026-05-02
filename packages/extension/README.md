@@ -3,7 +3,7 @@
 DevTools panel that lists Next.js SSR fetch calls captured by
 [`@leeyounagh/ssr-devtools`](../server).
 
-## Load locally
+## Load locally (unpacked)
 
 1. `chrome://extensions`
 2. Toggle **Developer mode**
@@ -13,12 +13,27 @@ DevTools panel that lists Next.js SSR fetch calls captured by
 
 The panel reads `<script data-ssr-devtools data-ssr-devtools-request-id="…"
 data-ssr-devtools-api-path="…">` from the page and queries the API path for
-that requestId. No host permissions or background page needed.
+that requestId. No `host_permissions` and no background page — everything runs
+through `chrome.devtools.inspectedWindow.eval`.
 
-## Publishing to the Chrome Web Store (later)
+## Build the icons
 
-1. Add 16/48/128 px icons (`icons/icon{16,48,128}.png`) and reference them in
-   `manifest.json`.
-2. Bump `version` in `manifest.json`.
-3. Zip the contents of this folder (not the folder itself).
-4. Submit at https://chrome.google.com/webstore/devconsole.
+The icons are generated from `icons/source.svg`:
+
+```bash
+npm install            # at the monorepo root
+npm run build:icons    # inside packages/extension
+```
+
+Output: `icons/icon{16,48,128}.png` (committed so the extension is loadable
+without a build step).
+
+## Build the Chrome Web Store zip
+
+```bash
+npm run build:zip      # inside packages/extension
+```
+
+Output: `dist/ssr-devtools-v<version>.zip` containing only the runtime files
+(manifest, devtools/panel HTML/JS/CSS, three icon PNGs). Submit this at
+https://chrome.google.com/webstore/devconsole.

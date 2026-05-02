@@ -1,0 +1,14 @@
+{
+  "name": "ssr-devtools-extension",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Chrome MV3 DevTools extension for inspecting Next.js SSR fetch calls",
+  "scripts": {
+    "build:icons": "node scripts/build-icons.mjs",
+    "build:zip": "node scripts/build-zip.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "archiver": "^7.0.1"
+  }
+}
