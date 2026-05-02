@@ -87,6 +87,22 @@ export { GET } from "@leesuyeon/ssr-devtools/route";
 That's it. Open a Next.js page, open DevTools, switch to the **SSR
 Fetches** panel.
 
+### Usage notes
+
+- **Initial page load** is captured automatically — the marker rendered by
+  `<SSRDevtoolsScript />` carries the initial render's session id, so SSR
+  fetches that fire during the first render show up in the panel as soon
+  as you open it.
+- **Subsequent server-side requests** (Server Actions, route handlers,
+  `revalidate` calls, mutations triggered by form submits, etc.) execute
+  in *new* request contexts with their own sessions. The panel does **not
+  auto-refresh** for these — click the **Refresh** button in the panel
+  after triggering a server action to merge the new fetches in.
+- The panel auto-refreshes on full page navigation
+  (`chrome.devtools.network.onNavigated`). Soft client-side navigations
+  inside the same document also need a manual Refresh.
+- Live polling / SSE push is planned; for now Refresh is the contract.
+
 ### Configuration
 
 ```ts
@@ -192,6 +208,20 @@ export { GET } from "@leesuyeon/ssr-devtools/route";
 > 로 취급해서 라우팅에서 제외됩니다.
 
 끝입니다. Next.js 페이지 열고 DevTools 열어서 **SSR Fetches** 탭 클릭하세요.
+
+### 사용 시 주의사항
+
+- **첫 페이지 로드** 의 SSR fetch 는 자동으로 잡힙니다 — `<SSRDevtoolsScript />`
+  가 박은 마커가 초기 렌더 세션 ID 를 들고 있어서 패널 열면 바로 보입니다.
+- **그 다음 서버사이드 요청** (Server Action, route handler, `revalidate`
+  호출, form submit 으로 발생하는 mutation 등) 은 각각 **새 request
+  context** + **새 세션** 으로 실행됩니다. 패널은 이런 요청에 대해
+  **자동 갱신되지 않으므로**, 서버 액션을 일으킨 뒤 패널의
+  **Refresh 버튼** 을 눌러야 새 fetch 가 표시됩니다.
+- 풀 페이지 네비게이션 시에는 자동 갱신됩니다
+  (`chrome.devtools.network.onNavigated`). App Router 의 soft
+  client-side 네비게이션은 수동 Refresh 필요.
+- 실시간 폴링 / SSE 푸시는 로드맵에 있습니다. 당분간은 Refresh 가 약속.
 
 ### 설정 옵션
 
