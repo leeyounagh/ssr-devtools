@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         # See ci.yml for rationale (npm/cli#4828 workaround).
         run: |
-          rm -rf node_modules
+          rm -rf node_modules package-lock.json
           npm install --no-audit --no-fund
 
       - name: Validate tag matches package version

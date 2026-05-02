@@ -20,12 +20,13 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        # Workaround for npm/cli#4828: workspace + optionalDependencies bug
-        # leaves platform-specific native binaries (rollup, esbuild) unin-
-        # stalled. Wiping node_modules and using `npm install` reliably
-        # resolves the matching binary for the current platform.
+        # Workaround for npm/cli#4828: workspaces + optionalDependencies
+        # bug leaves platform native binaries (rollup, esbuild) un-
+        # installed even with the matching entry present in the lockfile.
+        # The official guidance from the rollup error is to remove both
+        # node_modules AND package-lock.json before re-installing.
         run: |
-          rm -rf node_modules
+          rm -rf node_modules package-lock.json
           npm install --no-audit --no-fund
 
       - name: Build server package
