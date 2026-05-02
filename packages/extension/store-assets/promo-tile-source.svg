@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f2937"/>
+      <stop offset="1" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="iconBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#21262d"/>
+      <stop offset="1" stop-color="#161b22"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="440" height="280" fill="url(#bg)"/>
+  <!-- Subtle grid lines for "developer" feel -->
+  <line x1="0" y1="240" x2="440" y2="240" stroke="#21262d" stroke-width="1"/>
+  <line x1="0" y1="40" x2="440" y2="40" stroke="#21262d" stroke-width="1"/>
+
+  <!-- Icon (left, scaled-up 128 design) -->
+  <g transform="translate(28, 60)">
+    <rect width="160" height="160" rx="30" fill="url(#iconBg)"/>
+    <line x1="20" y1="28" x2="130" y2="28" stroke="#30363d" stroke-width="1.2" stroke-dasharray="4,4"/>
+    <circle cx="138" cy="28" r="5" fill="#3fb950"/>
+    <rect x="20" y="42" width="78" height="18" rx="4" fill="#3fb950"/>
+    <rect x="42" y="73" width="98" height="18" rx="4" fill="#1f6feb"/>
+    <rect x="65" y="104" width="42" height="18" rx="4" fill="#d29922"/>
+    <path d="M108 130 L128 138 L108 146 Z" fill="#e6edf3"/>
+  </g>
+
+  <!-- Text (right) -->
+  <g transform="translate(208, 0)">
+    <text x="0" y="120" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="26" font-weight="700" fill="#e6edf3">SSR DevTools</text>
+    <text x="0" y="148" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="14" font-weight="500" fill="#7d8590">for Next.js App Router</text>
+    <text x="0" y="184" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="13" fill="#c9d1d9">Inspect server-side fetch</text>
+    <text x="0" y="202" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="13" fill="#c9d1d9">calls in Chrome DevTools.</text>
+    <text x="0" y="232" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" fill="#7d8590">@leesuyeon/ssr-devtools</text>
+  </g>
+</svg>
