@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
 [![npm downloads](https://img.shields.io/npm/dm/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
+[![Chrome Web Store](https://img.shields.io/badge/chrome-web%20store-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)
 [![license](https://img.shields.io/npm/l/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://github.com/leeyounagh/ssr-devtools/blob/main/LICENSE)
 
 > Inspect **Next.js App Router SSR `fetch()` calls** in Chrome DevTools.
@@ -23,15 +24,22 @@ headers, status codes, durations, or response bodies.
 This package patches `globalThis.fetch` on the server, captures every SSR
 fetch into an in-memory per-request session, and exposes them through a
 small marker `<script>` and an API route. Pair it with the
-[SSR DevTools Chrome extension](https://github.com/leeyounagh/ssr-devtools/tree/main/packages/extension)
-(load unpacked from the repo for now) to view captured fetches in a
-DevTools panel — like the Network tab, but for SSR.
+[SSR DevTools Chrome extension](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)
+to view captured fetches in a DevTools panel — like the Network tab, but
+for SSR.
 
 ### Install
+
+**1. Server package** (this package):
 
 ```bash
 npm install @leesuyeon/ssr-devtools
 ```
+
+**2. Chrome extension** — pick one:
+
+- **[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)** (recommended)
+- Or load unpacked from source: clone [the repo](https://github.com/leeyounagh/ssr-devtools), open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select `packages/extension/`.
 
 Requirements: **Next.js 14+** with the **App Router**. On Next 14.x, also
 enable `experimental.instrumentationHook: true` in `next.config` (stable
@@ -146,15 +154,22 @@ SSR fetch도 DevTools의 Network 탭에 보이지 않습니다** — URL, 헤더
 
 이 패키지는 서버에서 `globalThis.fetch` 를 가로채 요청별 세션에 SSR
 fetch를 모으고, 작은 `<script>` 마커와 API route로 브라우저에 노출합니다.
-[SSR DevTools Chrome 익스텐션](https://github.com/leeyounagh/ssr-devtools/tree/main/packages/extension)
+[SSR DevTools Chrome 익스텐션](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)
 과 함께 쓰면 DevTools 패널에서 SSR fetch 목록을 볼 수 있어요 — Network
 탭처럼 생긴, 그러나 SSR 전용 패널이라고 보시면 됩니다.
 
 ### 설치
 
+**1. 서버 패키지** (이 패키지):
+
 ```bash
 npm install @leesuyeon/ssr-devtools
 ```
+
+**2. Chrome 익스텐션** — 둘 중 편한 쪽:
+
+- **[Chrome Web Store에서 설치](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)** (권장)
+- 또는 소스에서 직접 로드: [저장소](https://github.com/leeyounagh/ssr-devtools)를 clone 후 `chrome://extensions` → **개발자 모드** 켜고 → **압축해제된 확장 프로그램을 로드합니다** → `packages/extension/` 폴더 선택.
 
 요구사항: **Next.js 14+** + **App Router**. 14.x는 `next.config` 에
 `experimental.instrumentationHook: true` 도 켜야 합니다 (15.0+ 부터
