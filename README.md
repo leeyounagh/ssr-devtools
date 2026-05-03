@@ -1,9 +1,12 @@
 # ssr-devtools
 
+[![한국어](https://img.shields.io/badge/lang-한국어-blue?style=flat-square)](./README.md) [![English](https://img.shields.io/badge/lang-English-lightgrey?style=flat-square)](./README.en.md)
+
 > **Next.js App Router SSR fetch 디버깅용 Chrome DevTools 익스텐션 + 서버 패키지**
 
 [![npm version](https://img.shields.io/npm/v/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
 [![npm downloads](https://img.shields.io/npm/dm/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
+[![Chrome Web Store](https://img.shields.io/badge/chrome-web%20store-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)
 [![license](https://img.shields.io/npm/l/@leesuyeon/ssr-devtools.svg?style=flat-square)](./LICENSE)
 
 ## 빠른 설치
@@ -186,12 +189,20 @@ export { GET } from "@leesuyeon/ssr-devtools/route";
 
 ## 익스텐션 설치
 
-Chrome Web Store 등록 전까지는:
+두 가지 방법 중 편한 쪽을 고르세요.
 
-1. `chrome://extensions` 열기
-2. 우측 상단 **개발자 모드** 켜기
-3. **압축해제된 확장 프로그램을 로드합니다** → `packages/extension/` 폴더 선택
-4. Next.js 페이지 열고 DevTools(F12) → **SSR Fetches** 탭
+### 방법 1: Chrome Web Store (권장)
+
+1. [**Chrome Web Store에서 설치**](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm) → "Chrome에 추가" 클릭
+2. Next.js 페이지 열고 DevTools(F12) → **SSR Fetches** 탭
+
+### 방법 2: 소스 코드에서 직접 로드 (개발/커스터마이징용)
+
+1. 이 저장소를 clone하거나 [ZIP으로 다운로드](https://github.com/leeyounagh/ssr-devtools/archive/refs/heads/main.zip) 후 압축 해제
+2. `chrome://extensions` 열기
+3. 우측 상단 **개발자 모드** 켜기
+4. **압축해제된 확장 프로그램을 로드합니다** → `packages/extension/` 폴더 선택
+5. Next.js 페이지 열고 DevTools(F12) → **SSR Fetches** 탭
 
 ## 사용 시 주의사항
 
