@@ -14,3 +14,13 @@
 (자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
 
 ---
+## fix(extension): widen server-action lookback + auto-refresh panel
+**시간**: 14:24 | **브랜치**: fix/server-fetch-patch-self-healing | **자동 생성**: post-commit hook
+
+### 변경 사항
+- `packages/extension/panel.js`
+
+### 요약
+(자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
+
+---
