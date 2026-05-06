@@ -88,67 +88,110 @@ async function captureResponseBody(
   }
 }
 
-function captureRequestBody(
+async function captureRequestBody(
+  input: RequestInfo | URL,
   init: RequestInit | undefined,
   maxBytes: number,
-): BodyCapture | null {
+): Promise<BodyCapture | null> {
   const body = init?.body;
-  if (body == null) return null;
-  if (typeof body === "string") {
-    const truncated = body.length > maxBytes;
-    return {
-      data: truncated ? body.slice(0, maxBytes) : body,
-      truncated,
-      byteLength: body.length,
-      contentType: null,
-    };
-  }
-  if (body instanceof URLSearchParams) {
-    const s = body.toString();
-    return {
-      data: s,
-      truncated: false,
-      byteLength: s.length,
-      contentType: "application/x-www-form-urlencoded",
-    };
-  }
-  if (typeof FormData !== "undefined" && body instanceof FormData) {
-    const obj: Record<string, string> = {};
-    for (const [k, v] of body.entries()) {
-      obj[k] = typeof v === "string" ? v : `[file: ${(v as File).name}]`;
+  if (body != null) {
+    if (typeof body === "string") {
+      const truncated = body.length > maxBytes;
+      return {
+        data: truncated ? body.slice(0, maxBytes) : body,
+        truncated,
+        byteLength: body.length,
+        contentType: null,
+      };
     }
-    return {
-      data: JSON.stringify(obj),
-      truncated: false,
-      byteLength: 0,
-      contentType: "multipart/form-data",
-    };
+    if (body instanceof URLSearchParams) {
+      const s = body.toString();
+      return {
+        data: s,
+        truncated: false,
+        byteLength: s.length,
+        contentType: "application/x-www-form-urlencoded",
+      };
+    }
+    if (typeof FormData !== "undefined" && body instanceof FormData) {
+      const obj: Record<string, string> = {};
+      for (const [k, v] of body.entries()) {
+        obj[k] = typeof v === "string" ? v : `[file: ${(v as File).name}]`;
+      }
+      return {
+        data: JSON.stringify(obj),
+        truncated: false,
+        byteLength: 0,
+        contentType: "multipart/form-data",
+      };
+    }
+    if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
+      const len =
+        body instanceof ArrayBuffer ? body.byteLength : body.byteLength ?? 0;
+      return { data: "[binary]", truncated: false, byteLength: len, contentType: null };
+    }
+    if (typeof Blob !== "undefined" && body instanceof Blob) {
+      return {
+        data: "[blob]",
+        truncated: false,
+        byteLength: body.size,
+        contentType: body.type || null,
+      };
+    }
+    if (typeof ReadableStream !== "undefined" && body instanceof ReadableStream) {
+      return { data: "[stream]", truncated: false, byteLength: 0, contentType: null };
+    }
+    return { data: "[unknown body type]", truncated: false, byteLength: 0, contentType: null };
   }
-  if (body instanceof ArrayBuffer || ArrayBuffer.isView(body)) {
-    const len =
-      body instanceof ArrayBuffer ? body.byteLength : body.byteLength ?? 0;
-    return { data: "[binary]", truncated: false, byteLength: len, contentType: null };
+
+  // Fallback: ky / axios 등 일부 fetch 클라이언트는 `fetch(request, options)`
+  // 형태로 호출하며, 이 경우 body 는 init 이 아닌 첫 인자 Request 객체에 들어간다.
+  // init.body 가 비어있어도 input 이 Request 면 거기서 body 를 추출해 PUT/POST/PATCH
+  // 페이로드를 캡처한다.
+  if (typeof Request !== "undefined" && input instanceof Request && input.body) {
+    try {
+      const cloned = input.clone();
+      const contentType = cloned.headers.get("content-type");
+      const text = await cloned.text();
+      const truncated = text.length > maxBytes;
+      return {
+        data: truncated ? text.slice(0, maxBytes) : text,
+        truncated,
+        byteLength: text.length,
+        contentType,
+      };
+    } catch {
+      return null;
+    }
   }
-  if (typeof Blob !== "undefined" && body instanceof Blob) {
-    return {
-      data: "[blob]",
-      truncated: false,
-      byteLength: body.size,
-      contentType: body.type || null,
-    };
-  }
-  if (typeof ReadableStream !== "undefined" && body instanceof ReadableStream) {
-    return { data: "[stream]", truncated: false, byteLength: 0, contentType: null };
-  }
-  return { data: "[unknown body type]", truncated: false, byteLength: 0, contentType: null };
+  return null;
+}
+
+/**
+ * Server action / 사용자 정의 server-side 진입점에서 self-heal 을 보장하기 위한
+ * public alias. `<SSRDevtoolsScript/>` 와 `GET` 핸들러를 거치지 않는 컨텍스트
+ * (예: 'use server' module 의 ky/fetch 호출) 에서 호출하면, 해당 isolate 의
+ * globalThis.fetch 가 native 인 경우 즉시 wrapper 로 재패치한다.
+ *
+ * 권장 호출 위치: server-side API 클라이언트 factory (ky.create 등) 내부.
+ */
+export function ensurePatched(): void {
+  patchFetch();
 }
 
 export function patchFetch(): void {
   const state = getGlobalState();
-  if (state.patched) return;
   if (!state.config.enabled) return;
-  const original = globalThis.fetch;
+
+  // Self-healing: globalThis.fetch 가 우리 wrapper 그대로면 이미 패치 상태 — skip.
+  // Turbopack / HMR 로 reset 됐거나 새 RSC isolate 라면 다시 패치.
+  if (state.wrapped && globalThis.fetch === state.wrapped) return;
+
+  // 첫 patch 시 원본 보존. 이전에 patch 한 적이 있다면 보존된 original 을 재사용해
+  // wrapper 가 wrapper 를 호출하는 무한 재귀 방지.
+  const original = state.original ?? globalThis.fetch;
   if (!original) return;
+  state.original = original;
 
   const wrapped: typeof fetch = async (input, init) => {
     const config = state.config;
@@ -166,7 +209,7 @@ export function patchFetch(): void {
       (init?.headers as HeadersInit | undefined) ??
       (input instanceof Request ? input.headers : undefined);
     const requestHeaders = readHeaders(reqHeadersSource, config.redactHeaders);
-    const requestBody = captureRequestBody(init, config.maxBodySize);
+    const requestBody = await captureRequestBody(input, init, config.maxBodySize);
     const id = randomUUID();
 
     let response: Response;
@@ -214,5 +257,6 @@ export function patchFetch(): void {
   };
 
   globalThis.fetch = wrapped;
+  state.wrapped = wrapped;
   state.patched = true;
 }
