@@ -61,6 +61,21 @@ async function fetchAllSessions(apiPath) {
   return evalInPage(syncFetchExpr(apiPath));
 }
 
+// Server action / mutation 흐름은 page session 보다 *먼저* 시작했지만 user
+// 입장에서는 "지금 보고 있는 페이지의 일부" 인 경우가 많다. 예시:
+//   1. page A 진입 → marker session S_a (t=100)
+//   2. DELETE click → server action session S_x (t=120, S_a 와 무관한 새 isolate)
+//   3. router.refresh() 또는 push(samePath) → 새 page session S_b (t=125) 가
+//      markerSessionStartedAt 이 됨
+//   → S_x.startedAt(120) < S_b.startedAt(125) 라 가드에 걸려 panel 에서 사라짐.
+// marker session 시작 직전 N 초 내에 시작한 sessions 도 같이 보여 server action
+// 흐름이 navigation 으로 잘려도 추적 가능하게 한다.
+const SERVER_ACTION_LOOKBACK_MS = 60_000;
+// Manual refresh 외 자동 polling — `chrome.devtools.network.onNavigated` 가
+// router.refresh() / server action 후의 RSC re-render 에 일관되게 발화하지 않아,
+// 사용자가 DELETE 하고 페이지에 머무를 때 panel 이 stale 인 상태가 됨.
+const AUTO_REFRESH_INTERVAL_MS = 2_000;
+
 async function refresh() {
   setStatus("Loading…");
   try {
@@ -75,14 +90,16 @@ async function refresh() {
     // Server actions / mutations (POST, PUT, DELETE, …) execute in NEW server
     // request contexts with NEW headers, so their fetches end up in fresh
     // sessions whose ids the page DOM doesn't know about. To surface those,
-    // we merge the marker session with all other sessions started >= the
-    // marker session's startedAt.
+    // we merge the marker session with all other sessions started within the
+    // [marker.startedAt - LOOKBACK, ∞) window — covering both server actions
+    // that ran *before* the latest RSC re-render and any newer follow-ups.
     const [markerSession, all] = await Promise.all([
       fetchSession(marker.apiPath, marker.requestId).catch(() => null),
       fetchAllSessions(marker.apiPath).catch(() => ({ sessions: [] })),
     ]);
     const markerSessionStartedAt =
       markerSession?.startedAt ?? Number.MIN_SAFE_INTEGER;
+    const lowerBound = markerSessionStartedAt - SERVER_ACTION_LOOKBACK_MS;
     const seen = new Set();
     const merged = [];
     const addEntries = (session) => {
@@ -96,7 +113,7 @@ async function refresh() {
     addEntries(markerSession);
     for (const s of all?.sessions ?? []) {
       if (s.requestId === marker.requestId) continue;
-      if ((s.startedAt ?? 0) < markerSessionStartedAt) continue;
+      if ((s.startedAt ?? 0) < lowerBound) continue;
       addEntries(s);
     }
     merged.sort((a, b) => (a.startedAt ?? 0) - (b.startedAt ?? 0));
@@ -332,3 +349,8 @@ els.clear.addEventListener("click", clear);
 chrome.devtools.network.onNavigated.addListener(() => refresh());
 
 refresh();
+
+// Auto-refresh — server action 후 page 머무를 때 panel 이 stale 해지는 것 방지.
+// state.selectedId 와 state.detailTab 은 refresh() 가 건드리지 않아 사용자가 보던
+// 상세 영역은 유지된다.
+setInterval(refresh, AUTO_REFRESH_INTERVAL_MS);
