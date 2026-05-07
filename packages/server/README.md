@@ -10,6 +10,12 @@
 
 🌐 [English](#english) | [한국어](#한국어)
 
+![Preview of the SSR Fetches DevTools panel](https://raw.githubusercontent.com/leeyounagh/ssr-devtools/main/docs/preview.png)
+
+> ⚠️ **Both the npm package AND the Chrome extension must be installed** — this package collects SSR fetch data on the server, and the [Chrome extension](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm) renders it in the DevTools panel shown above. Install only one and you will see nothing.
+>
+> ⚠️ **npm 패키지와 [Chrome 익스텐션](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm) 두 가지를 모두 설치해야 동작합니다** — 이 패키지는 서버에서 SSR fetch 데이터를 수집하고, 익스텐션은 위 스크린샷처럼 DevTools 패널에 그 데이터를 렌더링합니다. 한 쪽만 설치하면 아무것도 안 보입니다.
+
 ---
 
 ## English
