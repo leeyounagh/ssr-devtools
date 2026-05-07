@@ -24,3 +24,14 @@
 (자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
 
 ---
+## chore(server): release v0.1.7
+**시간**: 19:33 | **브랜치**: main | **자동 생성**: post-commit hook
+
+### 변경 사항
+- `package-lock.json`
+- `packages/server/package.json`
+
+### 요약
+(자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
+
+---
