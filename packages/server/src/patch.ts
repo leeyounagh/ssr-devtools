@@ -148,18 +148,38 @@ async function captureRequestBody(
   // 형태로 호출하며, 이 경우 body 는 init 이 아닌 첫 인자 Request 객체에 들어간다.
   // init.body 가 비어있어도 input 이 Request 면 거기서 body 를 추출해 PUT/POST/PATCH
   // 페이로드를 캡처한다.
+  //
+  // ⚠️ cloned.text() 로 body 를 끝까지 읽으면 큰 페이로드일 때 caller upstream
+  // fetch 시작이 지연되어 ky/axios timeout 으로 끊기는 회귀 발생. captureResponseBody
+  // 와 동일하게 streaming + maxBytes cap + cancel 로 caller blocking 시간을 body
+  // 크기와 무관한 상수 수준으로 묶는다.
   if (typeof Request !== "undefined" && input instanceof Request && input.body) {
+    const cloned = input.clone();
+    const contentType = cloned.headers.get("content-type");
     try {
-      const cloned = input.clone();
-      const contentType = cloned.headers.get("content-type");
-      const text = await cloned.text();
-      const truncated = text.length > maxBytes;
-      return {
-        data: truncated ? text.slice(0, maxBytes) : text,
-        truncated,
-        byteLength: text.length,
-        contentType,
-      };
+      const reader = cloned.body!.getReader();
+      const chunks: Uint8Array[] = [];
+      let total = 0;
+      let truncated = false;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        total += value.byteLength;
+        if (total > maxBytes) {
+          const overshoot = total - maxBytes;
+          const keep = value.byteLength - overshoot;
+          if (keep > 0) chunks.push(value.subarray(0, keep));
+          truncated = true;
+          await reader.cancel();
+          break;
+        }
+        chunks.push(value);
+      }
+      const merged = mergeChunks(chunks);
+      const data = isTextLike(contentType)
+        ? new TextDecoder().decode(merged)
+        : `[binary ${total} bytes]`;
+      return { data, truncated, byteLength: total, contentType };
     } catch {
       return null;
     }

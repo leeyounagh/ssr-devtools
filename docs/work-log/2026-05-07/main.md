@@ -48,3 +48,15 @@
 (자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
 
 ---
+## fix(server): captureRequestBody Request 분기에 streaming + maxBytes cap
+**시간**: 20:50 | **브랜치**: main | **자동 생성**: post-commit hook
+
+### 변경 사항
+- `package-lock.json`
+- `packages/server/package.json`
+- `packages/server/src/patch.ts`
+
+### 요약
+(자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
+
+---
