@@ -35,3 +35,16 @@
 (자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
 
 ---
+## feat(extension): Request/Response body 에 Copy 버튼 추가
+**시간**: 20:23 | **브랜치**: main | **자동 생성**: post-commit hook
+
+### 변경 사항
+- `packages/extension/manifest.json`
+- `packages/extension/package.json`
+- `packages/extension/panel.css`
+- `packages/extension/panel.js`
+
+### 요약
+(자동 생성 스텁입니다. 필요 시 맥락을 보완해주세요.)
+
+---

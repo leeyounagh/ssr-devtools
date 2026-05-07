@@ -336,6 +336,48 @@ pre.body {
   }
 }
 
+.body-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.copy-btn svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+
+.copy-btn.copy-ok {
+  color: #1a7f37;
+  border-color: #1a7f37;
+}
+
+.copy-btn.copy-failed {
+  color: #cf222e;
+  border-color: #cf222e;
+}
+
+@media (prefers-color-scheme: dark) {
+  .copy-btn.copy-ok {
+    color: #3fb950;
+    border-color: #3fb950;
+  }
+  .copy-btn.copy-failed {
+    color: #f85149;
+    border-color: #f85149;
+  }
+}
+
 .url-cell {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;

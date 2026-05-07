@@ -284,11 +284,62 @@ function renderBody(capture) {
     </div>
   `;
   root.appendChild(meta);
+  const bodyText = prettify(capture.data, capture.contentType);
+  const wrap = document.createElement("div");
+  wrap.className = "body-wrap";
+  const toolbar = document.createElement("div");
+  toolbar.className = "body-toolbar";
+  const copyBtn = document.createElement("button");
+  copyBtn.type = "button";
+  copyBtn.className = "copy-btn";
+  copyBtn.title = "Copy to clipboard";
+  copyBtn.setAttribute("aria-label", "Copy body to clipboard");
+  copyBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+    </svg>
+    <span class="copy-label">Copy</span>
+  `;
+  copyBtn.addEventListener("click", () => copyToClipboard(bodyText, copyBtn));
+  toolbar.appendChild(copyBtn);
+  wrap.appendChild(toolbar);
   const pre = document.createElement("pre");
   pre.className = "body";
-  pre.textContent = prettify(capture.data, capture.contentType);
-  root.appendChild(pre);
+  pre.textContent = bodyText;
+  wrap.appendChild(pre);
+  root.appendChild(wrap);
   return root;
+}
+
+async function copyToClipboard(text, btn) {
+  const label = btn.querySelector(".copy-label");
+  const setState = (cls, text) => {
+    btn.classList.remove("copy-ok", "copy-failed");
+    if (cls) btn.classList.add(cls);
+    if (label) label.textContent = text;
+  };
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  } catch {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      ta.setAttribute("readonly", "");
+      document.body.appendChild(ta);
+      ta.select();
+      ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+    } catch {
+      ok = false;
+    }
+  }
+  setState(ok ? "copy-ok" : "copy-failed", ok ? "Copied" : "Failed");
+  setTimeout(() => setState(null, "Copy"), 1500);
 }
 
 function prettify(text, contentType) {
