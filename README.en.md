@@ -9,6 +9,15 @@
 [![Chrome Web Store](https://img.shields.io/badge/chrome-web%20store-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)
 [![license](https://img.shields.io/npm/l/@leesuyeon/ssr-devtools.svg?style=flat-square)](./LICENSE)
 
+![Preview of the SSR Fetches DevTools panel](./docs/preview.png)
+
+> ⚠️ **Both pieces are required for this to work**
+>
+> 1. **The npm package** — install it into your Next.js app and wire it up so the server starts collecting SSR fetch data.
+> 2. **The Chrome extension** — you **must** install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm) to view that data in the "SSR Fetches" DevTools panel shown above.
+>
+> The package alone collects data but has no UI to show it. The extension alone has nothing to read.
+
 ## Quick Install
 
 ```bash
@@ -17,7 +26,7 @@ npm install @leesuyeon/ssr-devtools
 
 📦 **npm**: https://www.npmjs.com/package/@leesuyeon/ssr-devtools
 
-After installing, follow the [integration guide](#integrate-into-your-nextjs-project) — a few lines across 4 files and you're done.
+After running the command above, follow the [integration guide](#integrate-into-your-nextjs-project) — a few lines across 4 files — and then install the Chrome extension as described in the [Install the extension](#install-the-extension) section.
 
 ---
 

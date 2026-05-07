@@ -9,6 +9,15 @@
 [![Chrome Web Store](https://img.shields.io/badge/chrome-web%20store-4285F4?style=flat-square&logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm)
 [![license](https://img.shields.io/npm/l/@leesuyeon/ssr-devtools.svg?style=flat-square)](./LICENSE)
 
+![SSR Fetches DevTools 패널 미리보기](./docs/preview.png)
+
+> ⚠️ **두 가지를 모두 설치해야 동작합니다**
+>
+> 1. **npm 패키지** 를 Next.js 앱에 설치하고 코드에 wiring → 서버에서 SSR fetch 데이터가 수집됩니다.
+> 2. **Chrome 익스텐션** 을 [Chrome Web Store](https://chromewebstore.google.com/detail/nextjs-ssr-devtools/pjnjiopickmfphfiomfondfmbkdhkbnm) 에서 **꼭** 설치해야 위 스크린샷처럼 DevTools 의 "SSR Fetches" 패널에서 그 데이터를 볼 수 있습니다.
+>
+> 패키지만 설치하면 데이터는 모이지만 보여줄 UI 가 없습니다. 익스텐션만 설치하면 읽을 데이터가 없습니다.
+
 ## 빠른 설치
 
 ```bash
@@ -17,7 +26,7 @@ npm install @leesuyeon/ssr-devtools
 
 📦 **npm**: https://www.npmjs.com/package/@leesuyeon/ssr-devtools
 
-설치 후 [통합 가이드](#nextjs-프로젝트에-통합하기)대로 4개 파일에 코드 몇 줄 추가하면 끝.
+위 명령으로 npm 패키지를 설치한 뒤 [통합 가이드](#nextjs-프로젝트에-통합하기)대로 4개 파일에 코드 몇 줄을 추가하고, [익스텐션 설치](#익스텐션-설치) 섹션에 따라 Chrome 익스텐션까지 설치하면 끝.
 
 ---
 
