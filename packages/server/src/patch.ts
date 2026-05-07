@@ -235,24 +235,35 @@ export function patchFetch(): void {
       throw err;
     }
 
-    const responseBody = await captureResponseBody(response, config.maxBodySize);
+    // ⚠️ caller 응답 path 를 차단하지 않도록 body capture 는 백그라운드로 분리.
+    // 큰 응답 (예: organization tree-with-employees 수십 MB) 의 경우 cloned stream 을
+    // 끝까지 읽는 데 수십 초가 걸려, 여기서 await 하면 caller 측 fetch client (ky 등)
+    // 의 timeout 이 먼저 발동해 정상 응답이 끊기는 회귀 발생 (2026-05-07).
+    // response 는 즉시 caller 에게 반환하고 body capture 는 별도 promise 로 진행.
+    const durationMs = Date.now() - startedAt;
     const responseHeaders = readHeaders(response.headers, config.redactHeaders);
-    const entry: FetchEntry = {
-      id,
-      url,
-      method,
-      startedAt,
-      durationMs: Date.now() - startedAt,
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok,
-      requestHeaders,
-      responseHeaders,
-      requestBody,
-      responseBody,
-      error: null,
-    };
-    (await getCurrentSession())?.entries.push(entry);
+    captureResponseBody(response, config.maxBodySize)
+      .then(async (responseBody) => {
+        const entry: FetchEntry = {
+          id,
+          url,
+          method,
+          startedAt,
+          durationMs,
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          requestHeaders,
+          responseHeaders,
+          requestBody,
+          responseBody,
+          error: null,
+        };
+        (await getCurrentSession())?.entries.push(entry);
+      })
+      .catch(() => {
+        // body capture 실패해도 caller 응답엔 영향 없음 — silent skip.
+      });
     return response;
   };
 
