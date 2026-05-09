@@ -1,6 +1,6 @@
 {
   "name": "@leesuyeon/ssr-devtools",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Chrome DevTools companion for inspecting Next.js SSR fetch calls",
   "license": "MIT",
   "repository": {
