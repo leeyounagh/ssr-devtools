@@ -1,3 +1,8 @@
+> [!WARNING]
+> **이 확장 프로그램은 더 이상 유지보수되지 않습니다.**
+> 본 패키지는 aoroa 전용 패키지로 이전되었습니다.
+> This extension is no longer maintained and has been migrated to an aoroa-internal package.
+
 # SSR DevTools — Chrome extension
 
 DevTools panel that lists Next.js SSR fetch calls captured by

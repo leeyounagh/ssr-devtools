@@ -1,3 +1,10 @@
+> [!WARNING]
+> **이 패키지는 더 이상 유지보수되지 않습니다.**
+> 본 패키지는 aoroa 전용 패키지로 이전되었습니다.
+> This package is no longer maintained and has been migrated to an aoroa-internal package.
+
+---
+
 # @leesuyeon/ssr-devtools
 
 [![npm version](https://img.shields.io/npm/v/@leesuyeon/ssr-devtools.svg?style=flat-square)](https://www.npmjs.com/package/@leesuyeon/ssr-devtools)
